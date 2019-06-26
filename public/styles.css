@@ -1,0 +1,24 @@
+*{
+    box-sizing: border-box;
+}
+
+#products{
+    display: flex;
+    flex-wrap:wrap;
+
+}
+
+#products > div{
+    border: 1px solid black;
+    width: 250px;
+    height: 380px;
+    text-align:center;
+}
+
+#products div div:first-child{
+    height: 250px;
+}
+
+.input div{
+    display:inline-block;
+}
