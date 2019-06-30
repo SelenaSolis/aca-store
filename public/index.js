@@ -63,9 +63,10 @@ function moreInfo(prodId){
             </div>`
         )
     productDiv.innerHTML = moreInfoDiv;
+}
 
-
-    
+function viewCart(){
+    listProducts(cartItems);
 }
 
 
