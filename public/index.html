@@ -11,7 +11,13 @@
 <body>
     <div class="input">
         <div><h3>search</h3></div>
-        <div><input type="text" id="searchText" oninput = "searchFunc()"/></div>
+        <div class="textBox"><input type="text" id="searchText" oninput = "searchFunc()"/></div>
+        <div><select id='categories' onchange='filterCategory(value)'>
+            <option value='all'>all</option>
+            <option value='electronics'>electronics</option>
+            <option value='food'>food</option>
+            <option value='sporting'>sporting</option>
+        </select></div>
     </div>
     <div><span id = 'cart'></span><img src = './cart.png' onclick = 'viewCart()'></a></div>
     

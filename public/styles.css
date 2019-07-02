@@ -1,9 +1,18 @@
 *{
     box-sizing: border-box;
 }
-
+.input{
+    background-color: #8a065e;
+    text-align: center;
+}
 .input div{
     display:inline-block;
+}
+input{
+    width: 500px;
+}
+.textBox{
+    float: center;
 }
 
 #products{
