@@ -1,19 +1,39 @@
 *{
     box-sizing: border-box;
 }
-.input{
+
+header{
     background-color: #8a065e;
+    height:85px;
+}
+
+.title:hover{
+    cursor: pointer;
+}
+
+.header{
     text-align: center;
+    height:85px;
+    display:flex;
+    flex-direction:row;
+    justify-content: space-between;
+    align-items: stretch;
 }
-.input div{
-    display:inline-block;
+
+.centerHeader{
+    display:flex;
+    justify-content: space-around;
+    align-items: center;
 }
+
+.centerHeader div{
+    align-items: center;
+}
+
 input{
     width: 500px;
 }
-.textBox{
-    float: center;
-}
+
 
 #products{
     display: flex;
@@ -32,11 +52,23 @@ input{
     height: 250px;
 }
 
-#product {
-    padding:
-}
-
 div.review{
     height: auto;
     border: 1px solid black;
+}
+
+.cart{
+    margin:0px 30px;
+    display:flex;
+    align-items: center;
+}
+
+.cart img:hover{
+    background-color: #c71c8e;
+    cursor: pointer;
+}
+
+#cart{
+    font-family: 'Times New Roman', Times, serif;
+    font-size:20px;
 }

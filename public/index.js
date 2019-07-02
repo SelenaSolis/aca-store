@@ -117,6 +117,7 @@ function removeCartItem(prodId){
 }
 
 function filterCategory(cat){
+    console.log(cat);
     if (cat === 'all'){
         listProducts(products);
     }
