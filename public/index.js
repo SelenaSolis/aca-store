@@ -8,11 +8,14 @@ function listProducts(products){
         newProd += `<div id = 'product'>
                 <a onclick = 'moreInfo(${product.id})'><div><img src=${product.imgUrl}></div>
                 <div><h4 id ='${product.id}'>${product.name}</h4></a></div>
+                <div id='hiddenReviews ${product.id}' class='hiddenReviews'><br></div>
                 <div><h5>${product.description}</h5></div>
                 <div>${product.price}</div>
-                <div>rating: ${product.rating}</div>
+                <div id='rating ${product.id}' onmouseover='displayReviews(${product.id})' onmouseout = 'hideReviews(${product.id})'>
+                    rating: ${product.rating}
+                </div>
+                <div><button onclick = 'addToCart(${product.id})' class='cartButton' id='cartButton${product.id}'>Add To Cart</button></div>
                 <div><button onclick = 'moreInfo(${product.id})' id = 'moreInfo'>More Information</button></div>
-                <div><button onclick = 'addToCart(${product.id})' id='cartButton${product.id}'>ADD TO CART</button></div>
                 <div id = 'moreInfo${product.id}'></div>
             </div>`;
     })
@@ -32,6 +35,7 @@ function listProducts(products){
     if (productsDiv){
         productsDiv.innerHTML = newProd; 
     }
+    
 }
 listProducts(products);
 
@@ -48,10 +52,12 @@ function searchFunc(){
 function addToCart(prodId){
     let foundProd = products.find(p => p.id === prodId);
     let foundInCart = cartItems.find(p => p.id === prodId);
+    //if items is in not in cart push to cart array
     if (!foundInCart){
         cartItems.push(foundProd);
         cartItems.find(p => p.id === prodId).quantity = 1;
     }
+    // if items is in cart, adjust quantity
     else{
         foundInCart.quantity += 1;
     }
@@ -127,4 +133,26 @@ function filterCategory(cat){
         listProducts(filteredProducts);
     }
     
+}
+
+function displayReviews(prodId){
+    product = products.find(p => p.id === prodId);
+    let reviewDiv = document.getElementById(`hiddenReviews ${prodId}`);
+    let ratingDiv = document.getElementById(`rating ${prodId}`)
+    let newRev = '';
+
+    for(i=0; i<3; i++){
+        if(product.reviews[i]){
+            newRev += `<div class = 'review'><div>${product.reviews[i].description}</div>
+            <div>${product.reviews[i].rating}</div>
+            </div>`
+        }
+    }
+    reviewDiv.innerHTML = newRev;
+}
+
+function hideReviews(prodId){
+    let reviewDiv = document.getElementById(`hiddenReviews ${prodId}`);
+    let newRev = `<br>`;
+    reviewDiv.innerHTML = newRev;
 }

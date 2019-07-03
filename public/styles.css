@@ -1,9 +1,12 @@
 *{
     box-sizing: border-box;
 }
+#products{
+    background-color: rgb(238, 223, 228);
+}
 
 header{
-    background-color: #8a065e;
+    background-color: #9e5887;
     height:85px;
 }
 
@@ -42,7 +45,7 @@ input{
 }
 
 #products > div{
-    border: 1px solid black;
+    border: 1px solid rgb(148, 148, 148);
     width: 250px;
     height: auto;
     text-align:center;
@@ -54,7 +57,8 @@ input{
 
 div.review{
     height: auto;
-    border: 1px solid black;
+    border: 1px solid rgb(148, 148, 148);
+    background-color:white;
 }
 
 .cart{
@@ -63,12 +67,42 @@ div.review{
     align-items: center;
 }
 
+.cart img{
+    border: 1px solid #9e5887;
+}
+
 .cart img:hover{
-    background-color: #c71c8e;
+    border: 1px solid #66114a;
     cursor: pointer;
+}
+
+#categories{
+    margin: 0 10px;
+    width: 150px;
 }
 
 #cart{
     font-family: 'Times New Roman', Times, serif;
     font-size:20px;
+}
+
+.cartButton {
+    background-color:#6b2f5c;
+    border: 1px solid #a04288;
+	border-radius:12px;
+	/* display:inline-block; */
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Verdana;
+	font-size:12px;
+	padding:3px 25px;
+}
+.cartButton:hover {
+    background-color:#7e4d71;
+}
+
+.hiddenReviews{
+    position: absolute;
+    margin: 0px 0px 600px 200px;
+    max-height:300px;
 }
