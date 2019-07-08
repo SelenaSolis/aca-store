@@ -45,6 +45,7 @@ listProducts(products);
 function searchFunc(){
     //assigns search text to variable
     let searchText = document.getElementById("searchText").value;
+    searchText.toLowerCase();
     //shows only products matching search
     let filteredProducts = products.filter(prod => 
         prod.name.toLowerCase().includes(searchText) || prod.description.toLowerCase().includes(searchText));
@@ -128,6 +129,8 @@ function viewCart(){
         //updates subtotal variable
         subtotal += priceFloat * Number(product.quantity);
     });
+    //make sure subtotal is displayed in correct $ format
+    subtotal = subtotal.toFixed(2);
     //changes style of subtotal div to display current total
     let subtotalDiv = document.getElementById('subtotal');
     subtotalDiv.style.border = '1px solid black';

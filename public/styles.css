@@ -6,7 +6,7 @@
 }
 
 header{
-    background-color: #9e5887;
+    background-color: #b3759e;
     height:85px;
 }
 
@@ -68,7 +68,7 @@ div.review{
 }
 
 .cart img{
-    border: 1px solid #9e5887;
+    border: 1px solid #b3759e;
 }
 
 .cart img:hover{
@@ -82,15 +82,20 @@ div.review{
 }
 
 #cart{
+    position: absolute;
     font-family: 'Times New Roman', Times, serif;
     font-size:20px;
+    background-color: rgb(192, 161, 190);
+    border-radius: 100%;
+    padding: 0 5px;
+    top:25px;
+    right:30px; 
 }
 
 .cartButton {
     background-color:#6b2f5c;
     border: 1px solid #a04288;
 	border-radius:12px;
-	/* display:inline-block; */
 	cursor:pointer;
 	color:#ffffff;
 	font-family:Verdana;
@@ -108,9 +113,6 @@ div.review{
 }
 
 #subtotal{
-    /* border: 2px solid black;
-    height: 100px;
-    width:250px; */
     float: right;
     font-family: 'Times New Roman', Times, serif;
     font-size: 20px;
