@@ -11,7 +11,10 @@
 <body>
     <header>
         <div class="header">
-            <div class='title' onclick=listProducts(products)><h1>ACA Store</h1></div>
+            <div class='title' onclick=listProducts(products)>
+                <h1>ACA Store</h1>
+                <h4 id="welcome"></h4>
+            </div>
             <div class = 'centerHeader'>
                 <div><h3>search</h3></div>
                 <div><input type="text" id="searchText" oninput = "searchFunc()"/></div>
@@ -27,8 +30,14 @@
             <div class='cart'><img src = './cart.png' onclick = 'viewCart()'><span id = 'cart'></span></div>
         </div>
     </header>
+    <div id="signUp">
+        Email <input id="email" /> <br/>
+        Password <input id="password"/> <br/>
+        <button type="button" id="btnSignUp" onClick="signUp">Sign Up</button>
+        <button type="button" id="btnLogIn" onClick="logIn()">Log In</button>
+    </div>
     <div id="products"></div>
-    <script src="products.js"></script>    
+    <!-- <script src="products.js"></script>     -->
     <script src="index.js"></script>  
 
 

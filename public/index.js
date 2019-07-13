@@ -1,3 +1,67 @@
+let products = [];
+
+let detailsButton = (document.createElement("button").value = "More Details!");
+let itemQuantity = 1;
+let txtEmail = document.getElementById("email");
+let txtPassword = document.getElementById("password");
+let btnSignUp = document.getElementById("btnSignUp");
+btnSignUp.onclick = signUp;
+
+window.onload = function(){
+    fetch("https://acastore.herokuapp.com/products")
+    .then (response => response.json())
+    .then (data => products = data)
+    .then (products => {
+        listProducts(products)
+        let storage = localStorage.getItem('user');
+        let signUpDiv = document.getElementById('signUp');
+        let welcomeDiv = document.getElementById('welcome');
+        if(storage){
+            signUpDiv.style.display = 'none';
+            storage = JSON.parse(storage)
+            let name = storage.email.split('@')[0];
+            name = name.toUpperCase()
+            welcomeDiv.innerHTML = `Hello, ${name}`
+        }
+    })
+}
+
+class User {
+    constructor(email, password, cartId) {
+      this.email = email;
+      this.password = password;
+      this.cartId = cartId;
+    }
+}
+
+function logIn(){
+    console.log("hello");
+    fetch("https://acastore.herokuapp.com/users")
+        .then(response => response.json())
+        .then(data => {
+            let user = data.find(user => user.email === txtEmail.value)
+            if (user.password ===txtPassword.value){
+                let signUpDiv = document.getElementById('signUp');
+                signUpDiv.style.display = 'none';
+                localStorage.setItem("user", JSON.stringify(user))
+            }
+        })
+}
+
+function signUp() {
+    console.log(new User(txtEmail.value, txtPassword.value, null));
+    let newUser = new User(txtEmail.value, txtPassword.value, null);
+    localStorage.setItem("user", JSON.stringify(newUser));
+  
+
+    fetch("https://acastore.herokuapp.com/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(newUser)
+    }).then(response => response.json());
+}
 
 //lists products
 function listProducts(products){
@@ -38,8 +102,7 @@ function listProducts(products){
     }
     
 }
-//calls function to list all products
-listProducts(products);
+
 
 //function filters using search text box
 function searchFunc(){
@@ -53,16 +116,28 @@ function searchFunc(){
     listProducts(filteredProducts)
 }
 
+class CartItem{
+    constructor(id, price, quantity, imgUrl, name, description) {
+        this.id = id;
+        this.price = price;
+        this.quantity = quantity;
+        this.imgUrl = imgUrl;
+        this.name = name;
+        this.description = description;
+      }
+}
+
+
 //adds items to cart array using id as parameter
 function addToCart(prodId){
     //finds the requested product in the products array and assigns to variable
     let foundProd = products.find(p => p.id === prodId);
     //finds product object in cart
     let foundInCart = cartItems.find(p => p.id === prodId);
-    //if items is in not in cart push to cart array
+    //if items is in not in cart push new CartItem to cart array
     if (!foundInCart){
-        cartItems.push(foundProd);
-        cartItems.find(p => p.id === prodId).quantity = 1;
+        let cartItem = new CartItem(foundProd.id, foundProd.price, 1, foundProd.imgUrl, foundProd.name, foundProd.description)
+        cartItems.push(cartItem);
     }
     // if item is in cart, adjust quantity
     else{
@@ -93,6 +168,7 @@ function moreInfo(prodId){
 
 //function displays cart items and quantities
 function viewCart(){
+    console.log(cartItems);
     listProducts(cartItems);
     //variable declaration for total cost
     let subtotal = 0;

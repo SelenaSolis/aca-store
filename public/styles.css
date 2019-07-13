@@ -14,6 +14,14 @@ header{
     cursor: pointer;
 }
 
+.title h1{
+    margin: 7px auto;
+}
+
+.title h4{
+    margin: auto;
+}
+
 .header{
     text-align: center;
     height:85px;
@@ -35,6 +43,14 @@ header{
 
 input{
     width: 500px;
+}
+
+#signUp{
+    text-Align:center;
+    height:200px;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 
@@ -72,9 +88,13 @@ div.review{
 }
 
 .cart img:hover{
-    border: 1px solid #66114a;
+    opacity: .6;
     cursor: pointer;
 }
+
+/* #product a:hover{
+    opacity: .1;
+} */
 
 #categories{
     margin: 0 10px;
