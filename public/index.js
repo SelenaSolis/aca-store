@@ -1,14 +1,15 @@
 let products = [];
+let cartItems = [];
+let cart;
 
 let detailsButton = (document.createElement("button").value = "More Details!");
 let itemQuantity = 1;
 let txtEmail = document.getElementById("email");
 let txtPassword = document.getElementById("password");
 let btnSignUp = document.getElementById("btnSignUp");
-btnSignUp.onclick = signUp;
 
 window.onload = function(){
-    fetch("https://acastore.herokuapp.com/products")
+    fetch('https://acastore.herokuapp.com/products')
     .then (response => response.json())
     .then (data => products = data)
     .then (products => {
@@ -17,14 +18,41 @@ window.onload = function(){
         let signUpDiv = document.getElementById('signUp');
         let welcomeDiv = document.getElementById('welcome');
         if(storage){
+            storage = JSON.parse(storage);
+            console.log(storage);
             signUpDiv.style.display = 'none';
-            storage = JSON.parse(storage)
             let name = storage.email.split('@')[0];
             name = name.toUpperCase()
             welcomeDiv.innerHTML = `Hello, ${name}`
+            if(storage.cartId){
+                getCartFetch(storage.id)
+            }
         }
     })
 }
+
+function getCartFetch(userId){
+    fetch('https://acastore.herokuapp.com/carts')
+        .then(response => response.json())
+        .then(data => {
+            cart = data.find(cart => cart.userId === userId)
+            localStorage.setItem("cart", JSON.stringify(cart))
+            })
+}
+
+function getUserFetch(email,password){
+    fetch("https://acastore.herokuapp.com/users")
+    .then(response => response.json())
+    .then(data => {
+        let user = data.find(user => user.email === email)
+        if (user.password ===password){
+            let signUpDiv = document.getElementById('signUp');
+            signUpDiv.style.display = 'none';
+            localStorage.setItem("user", JSON.stringify(user))
+        }
+    })
+}
+
 
 class User {
     constructor(email, password, cartId) {
@@ -35,32 +63,21 @@ class User {
 }
 
 function logIn(){
-    console.log("hello");
-    fetch("https://acastore.herokuapp.com/users")
-        .then(response => response.json())
-        .then(data => {
-            let user = data.find(user => user.email === txtEmail.value)
-            if (user.password ===txtPassword.value){
-                let signUpDiv = document.getElementById('signUp');
-                signUpDiv.style.display = 'none';
-                localStorage.setItem("user", JSON.stringify(user))
-            }
-        })
+    getUserFetch(txtEmail.value, txtPassword.value);
 }
 
 function signUp() {
-    console.log(new User(txtEmail.value, txtPassword.value, null));
+    let email = txtEmail.value;
+    let password = txtPassword.value;
     let newUser = new User(txtEmail.value, txtPassword.value, null);
-    localStorage.setItem("user", JSON.stringify(newUser));
-  
-
+    
     fetch("https://acastore.herokuapp.com/users", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: {"Content-Type": "application/json"},
       body: JSON.stringify(newUser)
-    }).then(response => response.json());
+    })
+    getUserFetch(email, password)
+    listProducts(products);
 }
 
 //lists products
@@ -84,23 +101,22 @@ function listProducts(products){
                 <div id = 'moreInfo${product.id}'></div>
             </div>`;
     })
-    //checks if there are items in session storage
-    let sessionCartItems = sessionStorage.getItem("cart");
-    //if there are items in session storage, assigns the to cart array
-    sessionCartItems ? (
-        cartItems = JSON.parse(sessionCartItems),
-        counter = 0,
-        cartItems.map(prod => {
-            counter = counter + Number(prod.quantity);
-        }),
-        cartDiv.innerHTML = counter
-        ) : (
-        cartItems = []
-        );
+    // //checks if there are items in session storage
+    // let sessionCartItems = sessionStorage.getItem("cart");
+    // //if there are items in session storage, assigns the to cart array
+    // sessionCartItems ? (
+    //     cartItems = JSON.parse(sessionCartItems),
+    //     counter = 0,
+    //     cartItems.map(prod => {
+    //         counter = counter + Number(prod.quantity);
+    //     }),
+    //     cartDiv.innerHTML = counter
+    //     ) : (
+    //     cartItems = []
+    //     );
     if (productsDiv){
         productsDiv.innerHTML = newProd + '<div id="subtotal"></div>';
-    }
-    
+    }   
 }
 
 
@@ -130,22 +146,62 @@ class CartItem{
 
 //adds items to cart array using id as parameter
 function addToCart(prodId){
+    let userStorage = localStorage.getItem('user');
+    userStorage = JSON.parse(userStorage)
+    console.log(userStorage)
+    if(!userStorage.cartId){
+        fetch("https://acastore.herokuapp.com/carts",{
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({userId: userStorage.id, products: []})
+        })
+        .then(response => response.json())
+        .then(data => console.log(data))
+    }
+    
+    getCartFetch(userStorage.id)
+    let cartStorage = localStorage.getItem('cart');
+    cartStorage = JSON.parse(cartStorage)
+    console.log(cartStorage)
+    
+    if(!userStorage.cartId){
+        fetch(`https://acastore.herokuapp.com/users/${userStorage.id}`,{
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({email: userStorage.email, password: userStorage.password, cartId: cartStorage.id})
+        })
+        .then(response =>response.json())
+        .then(data => localStorage.setItem("user", JSON.stringify(data)))
+    }
+
     //finds the requested product in the products array and assigns to variable
     let foundProd = products.find(p => p.id === prodId);
+
+    let cart = cartStorage.products;
+
     //finds product object in cart
-    let foundInCart = cartItems.find(p => p.id === prodId);
+    let foundInCart = cart.find(p => p.id === prodId);
+
+    
     //if items is in not in cart push new CartItem to cart array
     if (!foundInCart){
         let cartItem = new CartItem(foundProd.id, foundProd.price, 1, foundProd.imgUrl, foundProd.name, foundProd.description)
-        cartItems.push(cartItem);
+        cart.push(cartItem);
+        
     }
     // if item is in cart, adjust quantity
     else{
-        foundInCart.quantity += 1;
+        let quantity = Number(foundInCart.quantity);
+        foundInCart.quantity = quantity + 1;
     }
-    // //sets items in session storage
-    sessionStorage.setItem("cart", JSON.stringify(cartItems));
-    //lists all products
+
+    fetch(`https://acastore.herokuapp.com/carts/${cartStorage.id}`,{
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ userId: userStorage.id, products: cart})
+        })
+        .then(response =>response.json())
+        .then(data => localStorage.setItem("cart", JSON.stringify(data)))
     listProducts(products);
 }
 
@@ -168,7 +224,6 @@ function moreInfo(prodId){
 
 //function displays cart items and quantities
 function viewCart(){
-    console.log(cartItems);
     listProducts(cartItems);
     //variable declaration for total cost
     let subtotal = 0;
@@ -221,8 +276,8 @@ function viewCart(){
 function changeQuantity(prodId, qty){
     let product = cartItems.find(p => p.id === prodId);
     product.quantity = Number(qty);
-    //updates session storage if items are added
-    sessionStorage.setItem("cart", JSON.stringify(cartItems));
+    // //updates session storage if items are added
+    // sessionStorage.setItem("cart", JSON.stringify(cartItems));
     viewCart();
 }
 
@@ -231,8 +286,8 @@ function changeQuantity(prodId, qty){
 function removeCartItem(prodId){
     let removeProdIdx = cartItems.map(prod =>{return prod.id}).indexOf(prodId);
     cartItems.splice(removeProdIdx, 1);
-    //updates session storage if item is removed
-    sessionStorage.setItem("cart", JSON.stringify(cartItems));
+    // //updates session storage if item is removed
+    // sessionStorage.setItem("cart", JSON.stringify(cartItems));
     viewCart();
 }
 
