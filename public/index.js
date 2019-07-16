@@ -219,8 +219,35 @@ function hideReviews(prodId){
     reviewDiv.innerHTML = newRev;
 }
 
+class ItemOrder{
+    constructor(quantity, prodId) {
+        this.quantity = quantity;
+        this.prodId = prodId;
+      }
+}
+
+class Order{
+    constructor(userId, items) {
+        this.userId = userId;
+        this.items = items;
+      }
+}
+
 function submitFunc(){
-    alert("We have received your order!");
+    let cartStorage = JSON.parse(localStorage.getItem('cart'));
+    let cartProducts = cartStorage.products
+    let items = [];
+    items.push(cartProducts.map(p => {
+        new ItemOrder(p.quantity, p.id)
+    }))
+    alert(items);
+    let order = new Order(cartStorage.userId, items);
+
+    fetch("https://acastore.herokuapp.com/orders", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(order)
+        })
 }
 
 //function called when customer clicks checkout button
