@@ -1,5 +1,17 @@
 let products = [];
 let loggedIn;
+
+function alertFunc(){
+    alert("are you still there?")
+}
+
+function clearStorage(){
+    localStorage.clear();
+}
+
+
+
+
 if(loggedIn != 'undefined'){
     loggedIn = true;
 }
@@ -46,6 +58,7 @@ function getProductsFetch(){
 }
 
 window.onload = function(){
+    timeOutFunction();
     getProductsFetch()
     if(localStorage.getItem('user') && loggedIn == true){
         loggedInView(); 
@@ -53,6 +66,7 @@ window.onload = function(){
 }
 
 function listProducts(products){
+    timeOutFunction();
     let productsDiv = document.getElementById("products");
     let cartDiv = document.getElementById("cart");
     let newProd = '';
@@ -118,10 +132,44 @@ function searchFunc(){
     listProducts(filteredProducts)
 }
 
+function timeOutFunction(){
+    var hours = 1; // Reset when storage is more than 24hours
+    var minutes = 1;
+    var now = new Date().getTime();
+    var setupTime = localStorage.getItem('setupTime');
+    if (setupTime == null) {
+        localStorage.setItem('setupTime', now)
+    }
+    else {
+        if(now-setupTime > minutes*60*1000) {
+            localStorage.clear()
+            alert("your session timed out");
+        }
+        if(now-setupTime < minutes*60*1000){
+            localStorage.setItem('setupTime', now)
+        }
+    }   
+}
+
 function logIn(){
     let txtEmail = document.getElementById("email");
     let txtPassword = document.getElementById("password");
-    
+
+    timeOutFunction();
+    // function alertFunction(){
+    //     timeOutVar = setTimeout(function(){localStorage.clear()}, 60000);
+
+    //     alert("are you still there?")
+        
+    //     if(confirm){
+    //         setTimeout(alertFunction, 3000);
+    //         clearTimeout(timeOutVar);
+    //     }
+    // }
+
+    // setTimeout(alertFunction, 3000);
+
+
     fetch("https://acastore.herokuapp.com/users")
         .then(response => response.json())
         .then(data => user = data.find(user => user.email === txtEmail.value))

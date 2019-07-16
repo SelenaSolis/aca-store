@@ -10,6 +10,7 @@ function getCartFetch(cartId){
 }
 
 function addToCart(prodId){
+    timeOutFunction();
     let userStorage = JSON.parse(localStorage.getItem('user'))
     if(!userStorage.cartId){
         fetch("https://acastore.herokuapp.com/carts",{
