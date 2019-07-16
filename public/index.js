@@ -9,9 +9,6 @@ function clearStorage(){
     localStorage.clear();
 }
 
-
-
-
 if(loggedIn != 'undefined'){
     loggedIn = true;
 }
@@ -25,7 +22,6 @@ function loggedInView(){
     welcomeDiv.innerHTML = `Hello, ${name}`
     signUpDiv.style.display = 'none';
 }
-
 
 const asyncLocalStorage = {
     setItem: async function (key, value) {
@@ -91,13 +87,12 @@ function listProducts(products){
     if(localStorage.getItem("user") != null){
         userStorage = JSON.parse(localStorage.getItem("user"))
         if(userStorage.cartId != null){
-            getCartFetch(userStorage.id)
+            getCartFetch(userStorage.cartId)
             let cartStorage = JSON.parse(localStorage.getItem("cart"));
             let itemsCounter = 0;
             cartStorage.products.map(p => itemsCounter = itemsCounter + Number(p.quantity));
             cartDiv.innerHTML = itemsCounter
         }
-        
     }
     else{
         cartDiv.innerHTML = 0;
@@ -156,19 +151,6 @@ function logIn(){
     let txtPassword = document.getElementById("password");
 
     timeOutFunction();
-    // function alertFunction(){
-    //     timeOutVar = setTimeout(function(){localStorage.clear()}, 60000);
-
-    //     alert("are you still there?")
-        
-    //     if(confirm){
-    //         setTimeout(alertFunction, 3000);
-    //         clearTimeout(timeOutVar);
-    //     }
-    // }
-
-    // setTimeout(alertFunction, 3000);
-
 
     fetch("https://acastore.herokuapp.com/users")
         .then(response => response.json())

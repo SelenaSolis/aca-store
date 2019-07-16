@@ -24,6 +24,7 @@ function addToCart(prodId){
     }
 
     let userStorage = JSON.parse(localStorage.getItem('user'))
+    let foundProd = products.find(p => p.id === prodId);
     
     if(!userStorage.cartId){
         let cart = [];
@@ -48,37 +49,39 @@ function addToCart(prodId){
                 body: JSON.stringify({email: userStorage.email, password: userStorage.password, cartId: data.id})
             })
             .then(response => response.json())
-            .then(data => getUserFetch(data.email))
-        })
-        
-    }
-    
-
-    let cartStorage = JSON.parse(localStorage.getItem('cart'))
-    let cartProducts = cartStorage.products;
-    let foundProd = products.find(p => p.id === prodId);
-    let foundInCart = cartProducts.find(p => p.id === prodId);
-    if (!foundInCart){
-        let cartItem = new CartItem(foundProd.id, foundProd.price, 1, foundProd.imgUrl, foundProd.name, foundProd.description)
-        cartProducts.push(cartItem);
+            .then(data =>{
+                    asyncLocalStorage.setItem("user", JSON.stringify(data))
+                        .then(function(){
+                            listProducts(products);
+                        })
+                })
+        })      
     }
     else{
-        let quantity = Number(foundInCart.quantity);
-        foundInCart.quantity = quantity + 1;
+        let cartStorage = JSON.parse(localStorage.getItem('cart'))
+        let cartProducts = cartStorage.products;
+        let foundInCart = cartProducts.find(p => p.id === prodId);
+        if (!foundInCart){
+            let cartItem = new CartItem(foundProd.id, foundProd.price, 1, foundProd.imgUrl, foundProd.name, foundProd.description)
+            cartProducts.push(cartItem);
+        }
+        else{
+            let quantity = Number(foundInCart.quantity);
+            foundInCart.quantity = quantity + 1;
+        }
+        fetch(`https://acastore.herokuapp.com/carts/${cartStorage.id}`,{
+                method: "PUT",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({ userId: userStorage.id, products: cartProducts})
+            })
+            .then(response =>response.json())
+            .then(data => {
+                asyncLocalStorage.setItem("cart", JSON.stringify(data))
+                    .then(function(){
+                        listProducts(products);
+                    })
+            })
     }
-    fetch(`https://acastore.herokuapp.com/carts/${cartStorage.id}`,{
-            method: "PUT",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({ userId: userStorage.id, products: cartProducts})
-        })
-        .then(response =>response.json())
-        .then(data => {
-            asyncLocalStorage.setItem("cart", JSON.stringify(data))
-                .then(function(){
-                    listProducts(products);
-                    getCartFetch(data.id);
-                })
-        })
 }
 
 function viewCart(){
