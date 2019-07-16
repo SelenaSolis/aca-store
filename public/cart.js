@@ -11,12 +11,30 @@ function getCartFetch(cartId){
 
 function addToCart(prodId){
     timeOutFunction();
+
+    class CartItem{
+        constructor(id, price, quantity, imgUrl, name, description) {
+            this.id = id;
+            this.price = price;
+            this.quantity = quantity;
+            this.imgUrl = imgUrl;
+            this.name = name;
+            this.description = description;
+          }
+    }
+
     let userStorage = JSON.parse(localStorage.getItem('user'))
+    
     if(!userStorage.cartId){
+        let cart = [];
+        let foundProd = products.find(p => p.id === prodId);
+        let product = new CartItem(foundProd.id, foundProd.price, 1, foundProd.imgUrl, foundProd.name, foundProd.description)
+        cart.push(product);
+
         fetch("https://acastore.herokuapp.com/carts",{
             method: "POST",
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({userId: userStorage.id, products: []})
+            body: JSON.stringify({userId: userStorage.id, products: cart})
         })
         .then(response => response.json())
         .then(data => {
@@ -34,16 +52,7 @@ function addToCart(prodId){
         })
         
     }
-    class CartItem{
-        constructor(id, price, quantity, imgUrl, name, description) {
-            this.id = id;
-            this.price = price;
-            this.quantity = quantity;
-            this.imgUrl = imgUrl;
-            this.name = name;
-            this.description = description;
-          }
-    }
+    
 
     let cartStorage = JSON.parse(localStorage.getItem('cart'))
     let cartProducts = cartStorage.products;
